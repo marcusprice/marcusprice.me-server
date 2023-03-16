@@ -1,7 +1,9 @@
 package main
 
 import (
-	"net/http"
+	"fmt"
+	"os"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -17,7 +19,7 @@ func (config *Config) SetDefaults() {
 	}
 
 	if config.Port == "" {
-		config.Port = "6669"
+		config.Port = "6969"
 	}
 }
 
@@ -26,11 +28,21 @@ func main() {
 	config.SetDefaults()
 
 	r := gin.Default()
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"message": "pong",
-		})
+	r.GET("/", func(c *gin.Context) {
+		userAgent := strings.Split(c.GetHeader("User-Agent"), "/")[0]
+		if userAgent == "curl" {
+			businessCard, err := os.ReadFile("./public/businessCard")	
+			if err != nil {
+				// handle error
+				fmt.Println(err)
+			} else {
+				c.Header("Content-Type", "text/html")
+				_, _ = c.Writer.Write(businessCard)
+			}
+		} else {
+				
+		}
 	})
-	r.Run(config.Host + ":" + "69420")
+	r.Run(config.Host + ":" + config.Port)
 }
 
