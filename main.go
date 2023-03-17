@@ -27,8 +27,11 @@ func main() {
 	config := Config{}
 	config.SetDefaults()
 
-	r := gin.Default()
-	r.GET("/", func(c *gin.Context) {
+	router := gin.Default()
+	router.Static("/assets", "./public")
+	router.GET("/", func(c *gin.Context) {
+		c.Header("Content-Type", "text/html")
+
 		userAgent := strings.Split(c.GetHeader("User-Agent"), "/")[0]
 		if userAgent == "curl" {
 			businessCard, err := os.ReadFile("./public/businessCard")	
@@ -36,13 +39,18 @@ func main() {
 				// handle error
 				fmt.Println(err)
 			} else {
-				c.Header("Content-Type", "text/html")
 				_, _ = c.Writer.Write(businessCard)
 			}
 		} else {
-				
+			client, err := os.ReadFile("./public/index.html")
+			if err != nil {
+				fmt.Println(err)
+			} else {
+				_, _ = c.Writer.Write(client)
+
+			}
 		}
 	})
-	r.Run(config.Host + ":" + config.Port)
+	router.Run(config.Host + ":" + config.Port)
 }
 
