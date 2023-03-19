@@ -1,4 +1,4 @@
-module github.com/marcusprice/marcusprice.me
+module github.com/marcusprice/marcusprice.me-server
 
 go 1.20
 
