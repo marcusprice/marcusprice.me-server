@@ -1,3 +1,0 @@
-# ensures that public dir is present in repo, but no contents are staged
-*
-!.gitignore

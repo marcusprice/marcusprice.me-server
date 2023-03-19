@@ -1,16 +1,18 @@
 package main
 
 import (
-	"fmt"
-	"os"
+	"log"
+	"net/http"
 	"strings"
 
-	"github.com/gin-gonic/gin"
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 )
 
 type Config struct {
-	Host string
-	Port string
+	Host      string
+	Port      string
+	StaticDir string
 }
 
 func (config *Config) SetDefaults() {
@@ -21,36 +23,35 @@ func (config *Config) SetDefaults() {
 	if config.Port == "" {
 		config.Port = "6969"
 	}
+
+	if config.StaticDir == "" {
+		config.StaticDir = "./public"
+	}
 }
 
 func main() {
 	config := Config{}
 	config.SetDefaults()
 
-	router := gin.Default()
-	router.Static("/assets", "./public")
-	router.GET("/", func(c *gin.Context) {
-		c.Header("Content-Type", "text/html")
+	r := chi.NewRouter()
+	r.Use(middleware.Logger)
 
-		userAgent := strings.Split(c.GetHeader("User-Agent"), "/")[0]
-		if userAgent == "curl" {
-			businessCard, err := os.ReadFile("./public/businessCard")	
-			if err != nil {
-				// handle error
-				fmt.Println(err)
-			} else {
-				_, _ = c.Writer.Write(businessCard)
-			}
+	// serve static files at root dir
+	fs := http.FileServer(http.Dir(config.StaticDir))
+	r.Handle("/*", http.StripPrefix("/", fs))
+
+	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
+		userAgent := r.Header.Get("User-Agent")
+		if strings.Contains(userAgent, "curl") {
+			http.ServeFile(w, r, "./assets/businessCard")
 		} else {
-			client, err := os.ReadFile("./public/index.html")
-			if err != nil {
-				fmt.Println(err)
-			} else {
-				_, _ = c.Writer.Write(client)
-
-			}
+			http.ServeFile(w, r, config.StaticDir+"/index.html")
 		}
 	})
-	router.Run(config.Host + ":" + config.Port)
-}
 
+	log.Println("Starting on port: " + config.Port)
+	err := http.ListenAndServe("localhost:"+config.Port, r)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
