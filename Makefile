@@ -11,4 +11,4 @@ docker-build:
 	docker build -t marcusprice.me-server .
 
 docker-run:
-	docker run -it --rm --name running-marcusprice.me-server marcusprice.me-server
+	docker run -it -p 6969:6969 --rm --name running-marcusprice.me-server marcusprice.me-server

@@ -50,7 +50,7 @@ func main() {
 	})
 
 	log.Println("Starting on port: " + config.Port)
-	err := http.ListenAndServe("localhost:"+config.Port, r)
+	err := http.ListenAndServe("0.0.0.0:"+config.Port, r)
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -8,6 +8,10 @@ RUN go mod download && go mod verify
 
 COPY . .
 
+RUN make create-curl-card
+
 RUN go build -v -o /usr/local/bin/marcusprice.me-server ./...
+
+EXPOSE 6969
 
 CMD ["marcusprice.me-server"]
