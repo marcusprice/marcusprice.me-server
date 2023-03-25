@@ -1,6 +1,6 @@
 FROM golang:1.20
 
-WORKDIR /usr/src/marcusprice.me-backend
+WORKDIR /usr/src/marcusprice.me-server
 
 COPY go.mod go.sum ./
 
@@ -8,6 +8,6 @@ RUN go mod download && go mod verify
 
 COPY . .
 
-RUN go build -v -o usr/local/bin/marcusprice.me-backend ./...
+RUN go build -v -o /usr/local/bin/marcusprice.me-server ./...
 
-CMD ["marcusprice.me-backend"]
+CMD ["marcusprice.me-server"]

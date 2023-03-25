@@ -8,7 +8,7 @@ create-curl-card:
 	bash ./bin/business-card-template.sh
 
 docker-build:
-	docker build -t marcusprice.me-backend .
+	docker build -t marcusprice.me-server .
 
 docker-run:
-	docker run -it --rm --name marcusprice.me-backend marcusprice.me-backend
+	docker run -it --rm --name running-marcusprice.me-server marcusprice.me-server
