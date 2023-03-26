@@ -1,6 +1,9 @@
 dev:
 	air main.go
 
+tmux-session:
+	bash ./scripts/tmux-session.sh
+
 build:
 	go build main.go
 
