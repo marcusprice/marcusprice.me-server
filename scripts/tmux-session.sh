@@ -1,5 +1,4 @@
 #!/bin/bash
-# Session Name
 session="server"
 
 # Start New Session with our name
@@ -17,9 +16,8 @@ tmux rename-window -t 2 "shell"
 
 tmux new-window
 tmux rename-window -t 3 "dev-server"
-tmux send-keys -t "dev-server" "make dev" C-m
+tmux send-keys -t "dev-server" "clear" C-m "make dev" C-m
 
-tmux new-window
-tmux rename-window -t 4 "curl"
+tmux split-window -t 3
 
 tmux attach-session -t $SESSION
