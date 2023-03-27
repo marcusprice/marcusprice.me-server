@@ -7,30 +7,11 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/marcusprice/marcusprice.me-server/internal/config"
 )
 
-type Config struct {
-	Host      string
-	Port      string
-	StaticDir string
-}
-
-func (config *Config) SetDefaults() {
-	if config.Host == "" {
-		config.Host = "localhost"
-	}
-
-	if config.Port == "" {
-		config.Port = "6969"
-	}
-
-	if config.StaticDir == "" {
-		config.StaticDir = "./public"
-	}
-}
-
 func main() {
-	config := Config{}
+	config := config.Config{}
 	config.SetDefaults()
 
 	r := chi.NewRouter()
@@ -50,7 +31,7 @@ func main() {
 	})
 
 	log.Println("Starting on port: " + config.Port)
-	err := http.ListenAndServe("0.0.0.0:"+config.Port, r)
+	err := http.ListenAndServe("localhost:"+config.Port, r)
 	if err != nil {
 		log.Fatal(err)
 	}
