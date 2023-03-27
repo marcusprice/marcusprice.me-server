@@ -12,10 +12,12 @@ import (
 
 func main() {
 	config := config.Config{}
-	config.SetDefaults()
+	config.Initialize()
 
 	r := chi.NewRouter()
-	r.Use(middleware.Logger)
+	if config.Logging {
+		r.Use(middleware.Logger)
+	}
 
 	// serve static files at root dir
 	fs := http.FileServer(http.Dir(config.StaticDir))
@@ -30,8 +32,9 @@ func main() {
 		}
 	})
 
-	log.Println("Starting on port: " + config.Port)
-	err := http.ListenAndServe("localhost:"+config.Port, r)
+	serverAddress := config.Host + ":" + config.Port
+	log.Println("starting server at " + serverAddress)
+	err := http.ListenAndServe(serverAddress, r)
 	if err != nil {
 		log.Fatal(err)
 	}

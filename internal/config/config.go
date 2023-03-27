@@ -8,7 +8,7 @@ import (
 
 type configJson struct {
 	App struct {
-		Logging bool `json:"logging,omitempty"`
+		Logging *bool `json:"logging,omitempty"`
 	} `json:"app,omitempty"`
 	Server struct {
 		Host      *string `json:"host,omitempty"`
@@ -18,26 +18,15 @@ type configJson struct {
 }
 
 type Config struct {
-	// config
+	Logging   bool
 	Host      string
 	Port      string
 	StaticDir string
 }
 
-func (config *Config) SetDefaults() {
+func (config *Config) Initialize() {
+	config.setDefaults()
 	config.readConfig()
-
-	if config.Host == "" {
-		config.Host = "0.0.0.0"
-	}
-
-	if config.Port == "" {
-		config.Port = "6969"
-	}
-
-	if config.StaticDir == "" {
-		config.StaticDir = "./public"
-	}
 }
 
 func (config *Config) readConfig() {
@@ -47,10 +36,7 @@ func (config *Config) readConfig() {
 	if err != nil {
 		log.Println("INFO: no config file present")
 	}
-
 	json.Unmarshal(configFile, &configData)
-
-	log.Println(configData)
 
 	if configData.Server.Host != nil {
 		config.Host = *configData.Server.Host
@@ -63,4 +49,15 @@ func (config *Config) readConfig() {
 	if configData.Server.StaticDir != nil {
 		config.StaticDir = *configData.Server.StaticDir
 	}
+
+	if configData.App.Logging != nil {
+		config.Logging = *configData.App.Logging
+	}
+}
+
+func (config *Config) setDefaults() {
+	config.Logging = false
+	config.Host = "0.0.0.0"
+	config.Port = "6969"
+	config.StaticDir = "./public"
 }
